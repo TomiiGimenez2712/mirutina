@@ -407,7 +407,8 @@ window.toggleSet = function(exId) {
         row.classList.add('completed');
         
         // Registrar que entrenamos por lo menos "ALGO" para el registro global "Estilo GitHub"
-        const todayStr = new Date().toISOString().split('T')[0];
+        const localNow = new Date();
+        const todayStr = `${localNow.getFullYear()}-${String(localNow.getMonth() + 1).padStart(2, '0')}-${String(localNow.getDate()).padStart(2, '0')}`;
         statsData.workoutLog[todayStr] = true;
         saveStats();
         updateStreakUI();
@@ -448,31 +449,35 @@ function updateStreakUI() {
         return;
     }
     
-    // Identificar la semana genérica y rigurosa a través del LUNES de tal fecha.
-    const weeks = new Set();
-    dates.forEach(d => {
-        const dateObj = new Date(d);
+    // Función auxiliar para obtener la fecha local como "YYYY-MM-DD" seguro de zonas horarias
+    const getLocalStr = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    
+    const getMondayStr = (dateObj) => {
         const day = dateObj.getDay();
-        const diff = dateObj.getDate() - day + (day === 0 ? -6 : 1);
-        const mon = new Date(dateObj.setDate(diff)).toISOString().split('T')[0];
-        weeks.add(mon);
+        const d = new Date(dateObj); // Clon
+        d.setDate(d.getDate() - day + (day === 0 ? -6 : 1));
+        return getLocalStr(d);
+    };
+
+    const weeks = new Set();
+    dates.forEach(dStr => {
+        const parts = dStr.split('-');
+        const localD = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10)-1, parseInt(parts[2], 10));
+        weeks.add(getMondayStr(localD));
     });
     
-    // Definir este Lunes actual como base central de operación
-    const today = new Date();
-    const currentMonDiff = today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1);
-    const currentMonStr = new Date(new Date().setDate(currentMonDiff)).toISOString().split('T')[0];
-    
     let streak = 0;
-    let checkDate = new Date(currentMonStr);
+    const today = new Date();
     
-    // Regresar sobre el tiempo con una tolerancia temporal de 1 Año Calendario evaluado semana a semana
+    let checkDate = new Date(today);
+    checkDate.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
+    
     for(let i=0; i<52; i++) {
-        const checkStr = checkDate.toISOString().split('T')[0];
+        const checkStr = getMondayStr(checkDate);
         if(weeks.has(checkStr)) {
-            streak++; // Se incrementa la llamita
+            streak++;
         } else {
-            // Existe compasión y salvavidas tolerado únicamente si se evalúa LA SEMANA EXCLUSIVAMENTE PRESENTE INFERIOR AL LUNES
+            // Un perdón solo para LA SEMANA ACTUAL (en caso de que no haya entrenado aún esta semana, pero sí la pasada)
             if(i !== 0) break;
         }
         checkDate.setDate(checkDate.getDate() - 7);
@@ -498,7 +503,8 @@ window.openStatsModal = function() {
     for(let i=27; i>=0; i--) {
         const d = new Date(today);
         d.setDate(today.getDate() - i);
-        const dStr = d.toISOString().split('T')[0];
+        // Formateo seguro a hora local
+        const dStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         const isCompleted = statsData.workoutLog[dStr];
         
         grid.innerHTML += `<button type="button" class="grid-day ${isCompleted ? 'active' : ''}" onclick="toggleGridDay('${dStr}')" title="${dStr}"></button>`;
