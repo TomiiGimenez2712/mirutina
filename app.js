@@ -187,10 +187,11 @@ function checkWeeklyReset() {
     currentMonday.setHours(0,0,0,0); // Ignoramos tiempos extra; nos importa únicamente el día
     const currentMondayStr = currentMonday.toISOString().split('T')[0];
 
-    // ¡Es una nueva semana! Llevamos los ejercicios a "No completado" pero dejamos el peso de la semana
+    // ¡Es una nueva semana! Llevamos los ejercicios a "No completado", borramos insignias de PR nuevo, pero dejamos el peso de la semana
     if (statsData.lastWeekReset !== currentMondayStr) {
         for (let key in progressData) {
             progressData[key].completed = false;
+            progressData[key].isNewPR = false; // Quitamos la medalla de PR de la semana anterior
         }
         localStorage.setItem('rutinaProgress', JSON.stringify(progressData));
         statsData.lastWeekReset = currentMondayStr;
@@ -266,8 +267,8 @@ function renderDay(index) {
             const weightVal = progressData[exId]?.weight || '';
             const imgSearchLink = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(ex.name)}`;
             
-            // ¿Es esto un Récord Personal activo actualmente? (Si es igual al máximo peso anotado y no está vacío)
-            const isPR = (statsData.maxWeights[exId] && statsData.maxWeights[exId] === parseFloat(weightVal));
+            // Mostrar la insignia solo si es un nuevo récord logrado en esta misma semana
+            const isPR = progressData[exId]?.isNewPR || false;
 
             html += `
                 <div class="exercise">
@@ -371,6 +372,10 @@ window.saveWeight = function(exId, value) {
         if (numVal > currentMax) {
             statsData.maxWeights[exId] = numVal;
             saveStats();
+            
+            // Registrar que en esta semana logramos un PR para mostrar la insignia y que perdure
+            progressData[exId].isNewPR = true;
+            localStorage.setItem('rutinaProgress', JSON.stringify(progressData));
             
             // Forzar el despliegue del componente gráfico con una animación estallando
             const prBadge = document.getElementById('pr-' + exId);
