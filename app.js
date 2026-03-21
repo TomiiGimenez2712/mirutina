@@ -501,8 +501,20 @@ window.openStatsModal = function() {
         const dStr = d.toISOString().split('T')[0];
         const isCompleted = statsData.workoutLog[dStr];
         
-        grid.innerHTML += `<div class="grid-day ${isCompleted ? 'active' : ''}"></div>`;
+        grid.innerHTML += `<div class="grid-day ${isCompleted ? 'active' : ''}" onclick="toggleGridDay('${dStr}')" style="cursor: pointer;" title="${dStr}"></div>`;
     }
+}
+
+// Permitir al usuario tocar un cuadrito de la cuadrícula para registrar un entrenamiento retroactivo o borrarlo
+window.toggleGridDay = function(dStr) {
+    if (statsData.workoutLog[dStr]) {
+        delete statsData.workoutLog[dStr];
+    } else {
+        statsData.workoutLog[dStr] = true;
+    }
+    saveStats();
+    updateStreakUI();
+    openStatsModal(); // Refrescar los números de la ventana
 }
 
 // Cerrar la ventana inyectando el valor CSS estandar "display:none" por la clase oculta.
