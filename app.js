@@ -501,7 +501,7 @@ window.openStatsModal = function() {
         const dStr = d.toISOString().split('T')[0];
         const isCompleted = statsData.workoutLog[dStr];
         
-        grid.innerHTML += `<div class="grid-day ${isCompleted ? 'active' : ''}" onclick="toggleGridDay('${dStr}')" style="cursor: pointer;" title="${dStr}"></div>`;
+        grid.innerHTML += `<button type="button" class="grid-day ${isCompleted ? 'active' : ''}" onclick="toggleGridDay('${dStr}')" title="${dStr}"></button>`;
     }
 }
 
