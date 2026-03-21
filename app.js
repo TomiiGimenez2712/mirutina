@@ -504,3 +504,46 @@ window.openStatsModal = function() {
 window.closeStatsModal = function() {
     document.getElementById('stats-modal').classList.add('hidden');
 }
+
+/* 
+=========================================================
+  NAVEGACIÓN GESTUAL (SWIPE HORIZONTAL) 
+=========================================================
+*/
+
+let touchStartX = 0;
+let touchEndX = 0;
+const SWIPE_THRESHOLD = 70; // Distancia mínima en píxeles para considerar que fue un "deslizamiento"
+
+document.addEventListener('touchstart', e => {
+    // Evitar registrar swipes si estamos tocando el carrusel de días superior o el modal
+    if (e.target.closest('.day-selector') || e.target.closest('.modal-content')) return;
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener('touchend', e => {
+    if (e.target.closest('.day-selector') || e.target.closest('.modal-content')) return;
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    const swipeDistance = touchEndX - touchStartX;
+    
+    // Deslizó hacia la izquierda (Siguiente Día)
+    if (swipeDistance < -SWIPE_THRESHOLD) {
+        if (currentDayIndex < routineData.length - 1) {
+            currentDayIndex++;
+            renderDaySelector();
+            renderDay(currentDayIndex);
+        }
+    }
+    // Deslizó hacia la derecha (Día Anterior)
+    if (swipeDistance > SWIPE_THRESHOLD) {
+        if (currentDayIndex > 0) {
+            currentDayIndex--;
+            renderDaySelector();
+            renderDay(currentDayIndex);
+        }
+    }
+}
