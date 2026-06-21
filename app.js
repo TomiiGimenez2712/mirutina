@@ -151,15 +151,15 @@ const routines = {
                     desc: "Pectoral, hombro anterior, espalda y bíceps",
                     exercises: [
                         { id: "A1", name: "Press Inclinado con Mancuernas", details: "Trabajo brutal de pectoral, hombro anterior y tríceps.", sets: 4, reps: "8-10 reps" },
-                        { id: "A2", name: "Dominadas o Jalón al Pecho", details: "Involucra toda la espalda y el bíceps de forma pesada.", sets: 4, reps: "10-12 reps" }
+                        { id: "A2", name: "Jalón al Pecho agarre abierto", details: "Involucra toda la espalda y el bíceps de forma pesada.", sets: 4, reps: "10-12 reps" }
                     ]
                 },
                 {
                     name: "Biserie 2",
                     desc: "Pecho, tríceps y estructura del hombro",
                     exercises: [
-                        { id: "B1", name: "Fondos en Paralelas", details: "Compuesto clásico que devora calorías y activa pecho/tríceps (o lagartijas con peso).", sets: 3, reps: "10-12 reps" },
-                        { id: "B2", name: "Elevaciones Laterales con Mancuernas", details: "Aislamiento strategic para mantener el estímulo y estructura del hombro.", sets: 3, reps: "12-15 reps" }
+                        { id: "B1", name: "Fondos en maquina", details: "Compuesto clásico que devora calorías y activa pecho/tríceps.", sets: 3, reps: "10-12 reps" },
+                        { id: "B2", name: "Elevaciones Laterales con Mancuernas", details: "Aislamiento estrategico para mantener el estímulo y estructura del hombro.", sets: 3, reps: "12-15 reps" }
                     ]
                 }
             ]
@@ -226,7 +226,7 @@ const routines = {
                     desc: "Tríceps pesados, espalda y bíceps",
                     exercises: [
                         { id: "A1", name: "Press de Banca Agarre Estrecho", details: "Compuesto que traslada el esfuerzo del pecho hacia los tríceps de forma pesada.", sets: 4, reps: "8-10 reps" },
-                        { id: "A2", name: "Dominadas Supinas", details: "Palmas mirando hacia vos. Compuesto de espalda que pone al bíceps en máxima ventaja mecánica.", sets: 4, reps: "8-10 reps" }
+                        { id: "A2", name: "Jalon al pecho agarre supino", details: "Palmas mirando hacia vos. Compuesto de espalda que pone al bíceps en máxima ventaja mecánica.", sets: 4, reps: "8-10 reps" }
                     ]
                 },
                 {
@@ -321,11 +321,11 @@ function migrateLegacyData() {
 function checkWeeklyReset() {
     const today = new Date();
     const day = today.getDay(); // 0 Representa Domingo, 1 es Lunes
-    
+
     // Obtener la diferencia en tiempo para retrasar el cálculo artificialmente y calcular cuándo cayó "Lunes"
-    const diff = today.getDate() - day + (day === 0 ? -6 : 1); 
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1);
     const currentMonday = new Date(today.setDate(diff));
-    currentMonday.setHours(0,0,0,0); // Ignoramos tiempos extra; nos importa únicamente el día
+    currentMonday.setHours(0, 0, 0, 0); // Ignoramos tiempos extra; nos importa únicamente el día
     const currentMondayStr = currentMonday.toISOString().split('T')[0];
 
     // ¡Es una nueva semana! Llevamos los ejercicios a "No completado", borramos insignias de PR nuevo, pero dejamos el peso de la semana
@@ -360,7 +360,7 @@ function renderDaySelector() {
         const btn = document.createElement('button');
         btn.className = `day-btn ${index === currentDayIndex ? 'active' : ''}`;
         btn.textContent = day.shortName;
-        
+
         // Asignar el comportamiento al tocar cada botón (recarga los modelos y desplaza la vista)
         btn.onclick = () => {
             currentDayIndex = index;
@@ -407,7 +407,7 @@ function renderDay(index) {
             const isCompleted = progressData[exId]?.completed || false;
             const weightVal = progressData[exId]?.weight || '';
             const imgSearchLink = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(ex.name)}`;
-            
+
             // Mostrar la insignia solo si es un nuevo récord logrado en esta misma semana
             const isPR = progressData[exId]?.isNewPR || false;
 
@@ -461,7 +461,7 @@ function renderDay(index) {
     });
 
     container.innerHTML = html;
-    
+
     // Al instanciar las tarjetas de ejercicios hay que recalcular el porcentaje visual de la barra de progreso
     updateProgressBar();
 }
@@ -487,7 +487,7 @@ function updateProgressBar() {
         const percentage = total === 0 ? 0 : (done / total) * 100;
         pb.style.width = percentage + '%';
     }
-    
+
     // Devolvemos los cómputos de vuelta para analizar un futuro lanzamiento de "Confeti final"
     return { done, total };
 }
@@ -499,7 +499,7 @@ function updateProgressBar() {
 */
 
 // Acción disparada cuando el Cuadro de texto del peso se deselecciona o presiona 'Hecho'
-window.saveWeight = function(exId, value) {
+window.saveWeight = function (exId, value) {
     if (!progressData[exId]) progressData[exId] = { completed: false, weight: '' };
     progressData[exId].weight = value;
     localStorage.setItem('rutinaProgress', JSON.stringify(progressData));
@@ -508,22 +508,22 @@ window.saveWeight = function(exId, value) {
     const numVal = parseFloat(value);
     if (!isNaN(numVal) && numVal > 0) {
         const currentMax = statsData.maxWeights[exId] || 0;
-        
+
         // ¡RÉCORD DE PESO LOCAL SUPERADO!
         if (numVal > currentMax) {
             statsData.maxWeights[exId] = numVal;
             saveStats();
-            
+
             // Registrar que en esta semana logramos un PR para mostrar la insignia y que perdure
             progressData[exId].isNewPR = true;
             localStorage.setItem('rutinaProgress', JSON.stringify(progressData));
-            
+
             // Forzar el despliegue del componente gráfico con una animación estallando
             const prBadge = document.getElementById('pr-' + exId);
-            if(prBadge) {
+            if (prBadge) {
                 prBadge.style.display = 'inline-flex';
                 // Minúscula pirotecnia para premiar un nuevo pico de superación personal
-                if(window.confetti) {
+                if (window.confetti) {
                     confetti({ particleCount: 40, spread: 50, origin: { y: 0.6 }, drift: 0 });
                 }
             }
@@ -532,35 +532,35 @@ window.saveWeight = function(exId, value) {
 }
 
 // Tocar el gran botón interactivo que determina si una serie en cuestión ha finalizado
-window.toggleSet = function(exId) {
+window.toggleSet = function (exId) {
     if (!progressData[exId]) progressData[exId] = { completed: false, weight: '' };
-    
+
     // Consultar el progreso del usuario exactamente un segundo ANTES de registrar si avanzó o si deshizo el logro
     const { done: prevDone, total } = updateProgressBar();
-    
+
     // Invertir verdadero/falso
     progressData[exId].completed = !progressData[exId].completed;
     localStorage.setItem('rutinaProgress', JSON.stringify(progressData));
 
     const row = document.getElementById(`row-${exId}`);
-    
+
     if (progressData[exId].completed) {
         row.classList.add('completed');
-        
+
         // Registrar que entrenamos por lo menos "ALGO" para el registro global "Estilo GitHub"
         const localNow = new Date();
         const todayStr = `${localNow.getFullYear()}-${String(localNow.getMonth() + 1).padStart(2, '0')}-${String(localNow.getDate()).padStart(2, '0')}`;
         statsData.workoutLog[todayStr] = true;
         saveStats();
         updateStreakUI();
-        
+
     } else {
         row.classList.remove('completed');
     }
 
     // Consultar nuevamente a la barra si el estado ACTUALIZADO cumple los requisitos para lanzar confetis del 100%
     const { done: newDone } = updateProgressBar();
-    
+
     // Condición: Haber llegado directamente hacia LA CIMA total permitida de bloques de un día en específico.
     if (newDone === total && prevDone < total) {
         // ¡¡Fiesta espectacular global de fin de sesión!! (Una lluvia explosiva sostenida de confeti neón y verde intenso)
@@ -586,19 +586,19 @@ window.toggleSet = function(exId) {
 function getWorkoutsCountInFields(range) {
     const dates = Object.keys(statsData.workoutLog);
     if (range === 'all') return dates.length;
-    
+
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
     let limitDays = 28;
     if (range === '3m') limitDays = 90;
     else if (range === '1y') limitDays = 365;
-    
+
     const limitTime = today.getTime() - (limitDays * 24 * 60 * 60 * 1000);
-    
+
     let count = 0;
     dates.forEach(dStr => {
         const parts = dStr.split('-');
-        const date = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10)-1, parseInt(parts[2], 10));
+        const date = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
         if (date.getTime() >= limitTime) {
             count++;
         }
@@ -616,10 +616,10 @@ function updateStreakUI() {
 // Calcula las semanas seguidas (racha) para el modal
 function calculateWeeksStreak() {
     const dates = Object.keys(statsData.workoutLog).sort();
-    if(dates.length === 0) return 0;
-    
+    if (dates.length === 0) return 0;
+
     const getLocalStr = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    
+
     const getMondayStr = (dateObj) => {
         const day = dateObj.getDay();
         const d = new Date(dateObj); // Clon
@@ -630,22 +630,22 @@ function calculateWeeksStreak() {
     const weeks = new Set();
     dates.forEach(dStr => {
         const parts = dStr.split('-');
-        const localD = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10)-1, parseInt(parts[2], 10));
+        const localD = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
         weeks.add(getMondayStr(localD));
     });
-    
+
     let streak = 0;
     const today = new Date();
-    
+
     let checkDate = new Date(today);
     checkDate.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
-    
-    for(let i=0; i<52; i++) {
+
+    for (let i = 0; i < 52; i++) {
         const checkStr = getMondayStr(checkDate);
-        if(weeks.has(checkStr)) {
+        if (weeks.has(checkStr)) {
             streak++;
         } else {
-            if(i !== 0) break;
+            if (i !== 0) break;
         }
         checkDate.setDate(checkDate.getDate() - 7);
     }
@@ -653,16 +653,16 @@ function calculateWeeksStreak() {
 }
 
 // Ventana Emergente Táctil Inferior que provee Estadísticas GitHub.
-window.openStatsModal = function() {
+window.openStatsModal = function () {
     document.getElementById('stats-modal').classList.remove('hidden');
-    
+
     // Racha e historial dinámicos
     const workoutsCount = getWorkoutsCountInFields(selectedRange);
     const weeksStreak = calculateWeeksStreak();
-    
+
     document.getElementById('modal-workouts').textContent = workoutsCount;
     document.getElementById('modal-streak').textContent = weeksStreak;
-    
+
     // Sincronizar botones del selector de rango temporal
     const ranges = ['28d', '3m', '1y', 'all'];
     ranges.forEach(r => {
@@ -677,24 +677,24 @@ window.openStatsModal = function() {
         btnNueva.classList.toggle('active', activeRoutineId === 'nueva');
         btnAnterior.classList.toggle('active', activeRoutineId === 'anterior');
     }
-    
+
     // Inyectar en tiempo real los cuadros dinámicos estilo GitHub
     const grid = document.getElementById('activity-grid');
     grid.innerHTML = '';
     const today = new Date();
-    today.setHours(0,0,0,0);
-    
+    today.setHours(0, 0, 0, 0);
+
     let daysToShow = 28;
     const dates = Object.keys(statsData.workoutLog).sort();
     let historyDays = 28;
     if (dates.length > 0) {
         const parts = dates[0].split('-');
-        const oldestDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10)-1, parseInt(parts[2], 10));
+        const oldestDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
         const diffTime = Math.abs(today - oldestDate);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         historyDays = Math.max(28, Math.ceil(diffDays / 7) * 7);
     }
-    
+
     if (selectedRange === '28d') {
         daysToShow = 28;
     } else if (selectedRange === '3m') {
@@ -704,19 +704,19 @@ window.openStatsModal = function() {
     } else if (selectedRange === 'all') {
         daysToShow = Math.min(364, historyDays);
     }
-    
-    for(let i=daysToShow - 1; i>=0; i--) {
+
+    for (let i = daysToShow - 1; i >= 0; i--) {
         const d = new Date(today);
         d.setDate(today.getDate() - i);
         const dStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         const isCompleted = statsData.workoutLog[dStr];
-        
+
         grid.innerHTML += `<button type="button" class="grid-day ${isCompleted ? 'active' : ''}" onclick="toggleGridDay('${dStr}')" title="${dStr}"></button>`;
     }
 }
 
 // Cambiar el rango seleccionado y refrescar
-window.changeStatsRange = function(range) {
+window.changeStatsRange = function (range) {
     if (selectedRange === range) return;
     selectedRange = range;
     localStorage.setItem('rutinaStatsRange', range);
@@ -725,21 +725,21 @@ window.changeStatsRange = function(range) {
 }
 
 // Alternar entre rutinas desde el panel de estadísticas (escondido)
-window.switchRoutine = function(routineId) {
+window.switchRoutine = function (routineId) {
     if (activeRoutineId === routineId) return;
     activeRoutineId = routineId;
     localStorage.setItem('activeRoutineId', routineId);
     routineData = routines[activeRoutineId];
     currentDayIndex = 0;
-    
+
     // Re-renderizar carrusel y ejercicios de la nueva rutina
     renderDaySelector();
     renderDay(0);
-    
+
     // Actualizar botones en el modal
     document.getElementById('routine-btn-nueva').classList.toggle('active', activeRoutineId === 'nueva');
     document.getElementById('routine-btn-anterior').classList.toggle('active', activeRoutineId === 'anterior');
-    
+
     // Pirotecnia modesta de celebración
     if (window.confetti) {
         confetti({ particleCount: 25, spread: 35, origin: { y: 0.8 } });
@@ -747,7 +747,7 @@ window.switchRoutine = function(routineId) {
 }
 
 // Permitir al usuario tocar un cuadrito de la cuadrícula para registrar un entrenamiento retroactivo o borrarlo
-window.toggleGridDay = function(dStr) {
+window.toggleGridDay = function (dStr) {
     if (statsData.workoutLog[dStr]) {
         delete statsData.workoutLog[dStr];
     } else {
@@ -759,7 +759,7 @@ window.toggleGridDay = function(dStr) {
 }
 
 // Cerrar la ventana inyectando el valor CSS estandar "display:none" por la clase oculta.
-window.closeStatsModal = function() {
+window.closeStatsModal = function () {
     document.getElementById('stats-modal').classList.add('hidden');
 }
 
@@ -787,7 +787,7 @@ document.addEventListener('touchend', e => {
 
 function handleSwipe() {
     const swipeDistance = touchEndX - touchStartX;
-    
+
     // Deslizó hacia la izquierda (Siguiente Día)
     if (swipeDistance < -SWIPE_THRESHOLD) {
         if (currentDayIndex < routineData.length - 1) {
