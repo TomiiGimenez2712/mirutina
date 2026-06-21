@@ -202,8 +202,89 @@ main {
 
 /* CUADRÍCULA DE ACTIVIDAD (DISEÑO TIPO GITHUB CONTRIBUCIONES) */
 .activity-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; background: var(--bg-dark); 
-  padding: 16px; border-radius: 16px; border: 1px solid var(--border);
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; background: var(--bg-dark); 
+  padding: 12px; border-radius: 16px; border: 1px solid var(--border);
+  max-height: 230px; overflow-y: auto;
+}
+
+/* Estilos para el selector de rango segmentado de actividad */
+.range-selector-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+.range-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.range-segmented-control {
+  display: flex;
+  background: var(--bg-dark);
+  padding: 3px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  gap: 2px;
+}
+.range-segment-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 8px 4px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+  text-align: center;
+}
+.range-segment-btn.active {
+  background: var(--accent);
+  color: #000;
+  box-shadow: 0 2px 6px rgba(216, 241, 42, 0.15);
+}
+
+/* Sección de configuración de rutinas */
+.settings-section {
+  margin-top: 20px;
+  border-top: 0.5px solid var(--border);
+  padding-top: 20px;
+}
+.settings-section h4 {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.segmented-control {
+  display: flex;
+  background: var(--bg-dark);
+  padding: 4px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  gap: 4px;
+}
+.segment-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+}
+.segment-btn.active {
+  background: var(--accent);
+  color: #000;
+  box-shadow: 0 2px 8px rgba(216, 241, 42, 0.15);
 }
 
 /* Día base sin completar (gris inactivo) */
